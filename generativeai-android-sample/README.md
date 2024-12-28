@@ -24,7 +24,7 @@ apiKey=YOUR_API_KEY
 ```
 ## Features
 
-This sample showcases the following API capablilites:
+This sample showcases the following API capabilities:
 * Generate Text - demonstrates the Text feature from the SDK
 * Photo Reasoning - demonstrates the MultiModal feature from the SDK
 * Chat - demonstrates the Multi-turn Conversations feature from the SDK
