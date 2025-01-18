@@ -147,7 +147,7 @@ internal fun Tool.toInternal() =
   com.google.ai.client.generativeai.common.client.Tool(
     functionDeclarations?.map { it.toInternal() },
     codeExecution = codeExecution?.toInternal(),
-    googleSearchRetrieval = googleSearchRetrieval?.toInternal()
+    googleSearchRetrieval = googleSearchRetrieval?.toInternal(),
   )
 
 internal fun ToolConfig.toInternal() =
@@ -193,17 +193,21 @@ internal fun <T> com.google.ai.client.generativeai.type.Schema<T>.toInternal(): 
 
 internal fun JSONObject.toInternal() = Json.decodeFromString<JsonObject>(toString())
 
-internal fun com.google.ai.client.generativeai.type.GoogleSearchRetrieval.toInternal(): GoogleSearchRetrieval {
+internal fun com.google.ai.client.generativeai.type.GoogleSearchRetrieval.toInternal():
+  GoogleSearchRetrieval {
   return GoogleSearchRetrieval(dynamicRetrievalConfig.toInternal())
 }
 
-internal fun com.google.ai.client.generativeai.type.DynamicRetrievalConfig.toInternal(): DynamicRetrievalConfig {
+internal fun com.google.ai.client.generativeai.type.DynamicRetrievalConfig.toInternal():
+  DynamicRetrievalConfig {
   return DynamicRetrievalConfig(
     when (mode) {
-      DynamicRetrievalMode.DYNAMIC -> com.google.ai.client.generativeai.common.client.DynamicRetrievalConfig.Mode.DYNAMIC
-      DynamicRetrievalMode.UNSPECIFIED -> com.google.ai.client.generativeai.common.client.DynamicRetrievalConfig.Mode.UNSPECIFIED
+      DynamicRetrievalMode.DYNAMIC ->
+        com.google.ai.client.generativeai.common.client.DynamicRetrievalConfig.Mode.DYNAMIC
+      DynamicRetrievalMode.UNSPECIFIED ->
+        com.google.ai.client.generativeai.common.client.DynamicRetrievalConfig.Mode.UNSPECIFIED
     },
-    dynamicThreshold
+    dynamicThreshold,
   )
 }
 

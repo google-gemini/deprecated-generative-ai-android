@@ -39,7 +39,7 @@ data class Tool(
   val functionDeclarations: List<FunctionDeclaration>? = null,
   // This is a json object because it is not possible to make a data class with no parameters.
   val codeExecution: JsonObject? = null,
-  val googleSearchRetrieval: GoogleSearchRetrieval? = null
+  val googleSearchRetrieval: GoogleSearchRetrieval? = null,
 )
 
 @Serializable
@@ -61,20 +61,14 @@ data class FunctionCallingConfig(val mode: Mode) {
 @Serializable
 data class FunctionDeclaration(val name: String, val description: String, val parameters: Schema)
 
-@Serializable
-data class GoogleSearchRetrieval(val dynamicRetrievalConfig: DynamicRetrievalConfig)
+@Serializable data class GoogleSearchRetrieval(val dynamicRetrievalConfig: DynamicRetrievalConfig)
 
 @Serializable
-data class DynamicRetrievalConfig(
-  val mode: Mode,
-  val dynamicThreshold: Float?
-) {
+data class DynamicRetrievalConfig(val mode: Mode, val dynamicThreshold: Float?) {
   @Serializable
   enum class Mode {
-    @SerialName("MODE_DYNAMIC")
-    DYNAMIC,
-    @SerialName("MODE_UNSPECIFIED")
-    UNSPECIFIED
+    @SerialName("MODE_DYNAMIC") DYNAMIC,
+    @SerialName("MODE_UNSPECIFIED") UNSPECIFIED
   }
 }
 

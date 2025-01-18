@@ -16,9 +16,5 @@
 
 package com.google.ai.client.generativeai.type
 
-/**
- * Retrieval tool that is powered by Google search.
- */
-data class GoogleSearchRetrieval(
-    val dynamicRetrievalConfig: DynamicRetrievalConfig
-)
+/** Retrieval tool that is powered by Google search. */
+data class GoogleSearchRetrieval(val dynamicRetrievalConfig: DynamicRetrievalConfig)

@@ -17,9 +17,9 @@
 package com.google.ai.client.generativeai.type
 
 /*
-* The mode of the predictor to be used in [DynamicRetrievalConfig].
-*/
+ * The mode of the predictor to be used in [DynamicRetrievalConfig].
+ */
 enum class DynamicRetrievalMode {
-    DYNAMIC,
-    UNSPECIFIED
+  DYNAMIC,
+  UNSPECIFIED
 }

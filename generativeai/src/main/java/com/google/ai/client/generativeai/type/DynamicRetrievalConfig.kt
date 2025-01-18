@@ -19,16 +19,15 @@ package com.google.ai.client.generativeai.type
 import androidx.annotation.FloatRange
 
 /*
-* Specifies the dynamic retrieval configuration for the given source.
-*/
+ * Specifies the dynamic retrieval configuration for the given source.
+ */
 data class DynamicRetrievalConfig(
-    /*
-    * The mode of the predictor to be used in dynamic retrieval.
-     */
-    val mode: DynamicRetrievalMode,
-    /*
-    * (Optional) The threshold to be used in dynamic retrieval. If not set, a system default value is used.
-     */
-    @FloatRange(0.0, 1.0)
-    val dynamicThreshold: Float? = null
+  /*
+   * The mode of the predictor to be used in dynamic retrieval.
+   */
+  val mode: DynamicRetrievalMode,
+  /*
+   * (Optional) The threshold to be used in dynamic retrieval. If not set, a system default value is used.
+   */
+  @FloatRange(0.0, 1.0) val dynamicThreshold: Float? = null,
 )

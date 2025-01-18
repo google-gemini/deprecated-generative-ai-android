@@ -31,7 +31,7 @@ class Tool
 constructor(
   val functionDeclarations: List<FunctionDeclaration>? = null,
   val codeExecution: JSONObject? = null,
-  val googleSearchRetrieval: GoogleSearchRetrieval? = null
+  val googleSearchRetrieval: GoogleSearchRetrieval? = null,
 ) {
   companion object {
     @JvmField val CODE_EXECUTION = Tool(codeExecution = JSONObject())
