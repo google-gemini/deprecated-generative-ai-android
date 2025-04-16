@@ -24,8 +24,6 @@ import com.google.ai.client.generativeai.common.util.fullModelName
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -38,12 +36,9 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.utils.io.ByteChannel
 import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.TimeoutCancellationException
@@ -98,16 +93,8 @@ internal constructor(
     requestOptions: RequestOptions,
     apiClient: String,
     headerProvider: HeaderProvider?,
-    channel: ByteChannel,
-    status: HttpStatusCode,
-  ) : this(
-    key,
-    model,
-    requestOptions,
-    MockEngine { respond(channel, status, headersOf(HttpHeaders.ContentType, "application/json")) },
-    apiClient,
-    headerProvider,
-  )
+    engine: HttpClientEngine,
+  ) : this(key, model, requestOptions, engine, apiClient, headerProvider)
 
   private val model = fullModelName(model)
 
