@@ -72,6 +72,7 @@ internal fun ChatRoute(
     Scaffold(
         bottomBar = {
             MessageInput(
+                isLoading = chatUiState.isLoading,
                 onSendMessage = { inputText ->
                     chatViewModel.sendMessage(inputText)
                 },
@@ -146,13 +147,6 @@ fun ChatBubbleItem(
             modifier = Modifier.padding(bottom = 4.dp)
         )
         Row {
-            if (chatMessage.isPending) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(all = 8.dp)
-                )
-            }
             BoxWithConstraints {
                 Card(
                     colors = CardDefaults.cardColors(containerColor = backgroundColor),
@@ -171,6 +165,7 @@ fun ChatBubbleItem(
 
 @Composable
 fun MessageInput(
+    isLoading: Boolean,
     onSendMessage: (String) -> Unit,
     resetScroll: () -> Unit = {}
 ) {
@@ -198,6 +193,7 @@ fun MessageInput(
                     .weight(0.85f)
             )
             IconButton(
+                enabled = !isLoading,
                 onClick = {
                     if (userMessage.isNotBlank()) {
                         onSendMessage(userMessage)
@@ -211,11 +207,19 @@ fun MessageInput(
                     .fillMaxWidth()
                     .weight(0.15f)
             ) {
-                Icon(
-                    Icons.Default.Send,
-                    contentDescription = stringResource(R.string.action_send),
-                    modifier = Modifier
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(all = 8.dp)
+                    )
+                } else {
+                    Icon(
+                        Icons.Default.Send,
+                        contentDescription = stringResource(R.string.action_send),
+                        modifier = Modifier
+                    )
+                }
             }
         }
     }

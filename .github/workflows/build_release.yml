@@ -20,16 +20,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: gradle
       - name: Build the generativeai release artifacts
         run: ./gradlew generativeai:publishAllPublicationsToMavenRepository
-      - name: Upload the generativeai artifacts
-        uses: actions/upload-artifact@v2
+
+      - name: Upload generated artifacts
+        uses: actions/upload-artifact@v4
+
         with:
           name: generative-ai-android
           path: generativeai/m2
