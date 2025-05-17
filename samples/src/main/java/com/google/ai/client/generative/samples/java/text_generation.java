@@ -42,6 +42,11 @@ class TextGeneration {
   void TextGenTextOnlyPrompt() {
     // [START text_gen_text_only_prompt]
     // Specify a Gemini model appropriate for your use case
+    import com.google.ai.client.generativeai.GenerativeModel;
+    import com.google.ai.client.generativeai.java.GenerativeModelFutures;
+    import com.google.ai.client.generativeai.type.Content;
+    import com.google.ai.client.generativeai.type.GenerateContentResponse;
+    
     GenerativeModel gm =
         new GenerativeModel(
             /* modelName */ "gemini-1.5-flash",

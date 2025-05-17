@@ -32,14 +32,12 @@ import com.google.ai.sample.R
 
 suspend fun textGenTextOnlyPrompt() {
   // [START text_gen_text_only_prompt]
-  val generativeModel =
-      GenerativeModel(
-          // Specify a Gemini model appropriate for your use case
-          modelName = "gemini-1.5-flash",
-          // Access your API key as a Build Configuration variable (see "Set up your API key" above)
-          apiKey = BuildConfig.apiKey)
+  import com.google.ai.client.generativeai.GenerativeModel
+  val geminiApiKey = BuildConfig.geminiApiKey
 
-  val prompt = "Write a story about a magic backpack."
+  val generativeModel = GenerativeModel( modelName = "gemini-1.5-flash", apiKey = BuildConfig.geminiApiKey)
+
+  val prompt = "Explain how AI works"
   val response = generativeModel.generateContent(prompt)
   print(response.text)
   // [END text_gen_text_only_prompt]
@@ -47,12 +45,10 @@ suspend fun textGenTextOnlyPrompt() {
 
 suspend fun textGenTextOnlyPromptStreaming() {
   // [START text_gen_text_only_prompt_streaming]
-  val generativeModel =
-      GenerativeModel(
-          // Specify a Gemini model appropriate for your use case
-          modelName = "gemini-1.5-flash",
-          // Access your API key as a Build Configuration variable (see "Set up your API key" above)
-          apiKey = BuildConfig.apiKey)
+  import com.google.ai.client.generativeai.GenerativeModel
+  val geminiApiKey = BuildConfig.geminiApiKey
+
+  val generativeModel = GenerativeModel(modelName = "gemini-1.5-flash", apiKey = BuildConfig.apiKey)
 
   val prompt = "Write a story about a magic backpack."
   // Use streaming with text-only input
