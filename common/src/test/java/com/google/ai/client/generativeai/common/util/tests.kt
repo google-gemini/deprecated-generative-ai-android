@@ -28,7 +28,11 @@ import com.google.ai.client.generativeai.common.shared.Content
 import com.google.ai.client.generativeai.common.shared.TextPart
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteChannel
 import io.ktor.utils.io.close
 import io.ktor.utils.io.writeFully
@@ -108,8 +112,9 @@ internal fun commonTest(
       requestOptions,
       TEST_CLIENT_ID,
       null,
-      channel,
-      status,
+      MockEngine {
+        respond(channel, status, headersOf(HttpHeaders.ContentType, "application/json"))
+      },
     )
   CommonTestScope(channel, apiController).block()
 }
