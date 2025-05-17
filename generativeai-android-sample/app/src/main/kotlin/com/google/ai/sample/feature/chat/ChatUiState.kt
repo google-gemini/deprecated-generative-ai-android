@@ -36,4 +36,17 @@ class ChatUiState(
             _messages.add(newMessage)
         }
     }
+
+    fun addOrUpdate(msg: ChatMessage) {
+        if(!updateMessage(msg.id, msg)) addMessage(msg)
+    }
+
+    fun updateMessage(id: String, newMessage: ChatMessage): Boolean {
+        val index = _messages.indexOfFirst { it.id == id }
+        if (index != -1) {
+            _messages[index] = newMessage
+        }
+
+        return index != -1
+    }
 }

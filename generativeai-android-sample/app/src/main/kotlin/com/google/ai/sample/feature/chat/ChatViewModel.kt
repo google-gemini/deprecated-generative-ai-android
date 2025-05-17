@@ -24,7 +24,13 @@ import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.runningFold
+import kotlinx.coroutines.flow.skip
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class ChatViewModel(
     generativeModel: GenerativeModel
@@ -61,16 +67,18 @@ class ChatViewModel(
 
         viewModelScope.launch {
             try {
-                val response = chat.sendMessage(userMessage)
-
-                _uiState.value.replaceLastPendingMessage()
-
-                response.text?.let { modelResponse ->
-                    _uiState.value.addMessage(
+                val uuid = UUID.randomUUID().toString()
+                chat.sendMessageStream(userMessage).runningFold("") { message, response ->
+                    message + response.text
+                }.filter { it.isNotEmpty() }.collectIndexed { index, value ->
+                    if (index == 0) {
+                        _uiState.value.replaceLastPendingMessage()
+                    }
+                    _uiState.value.addOrUpdate(
                         ChatMessage(
-                            text = modelResponse,
-                            participant = Participant.MODEL,
-                            isPending = false
+                            id = uuid,
+                            text = value,
+                            participant = Participant.MODEL
                         )
                     )
                 }
