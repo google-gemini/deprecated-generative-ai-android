@@ -57,7 +57,7 @@ class Chat(private val model: GenerativeModel, val history: MutableList<Content>
     prompt.assertComesFromUser()
     attemptLock()
     try {
-      val response = model.generateContent(*history.toTypedArray(), prompt)
+      val response = model.generateContent(prompt, *history.toTypedArray())
       history.add(prompt)
       history.add(response.candidates.first().content)
       return response
@@ -100,7 +100,7 @@ class Chat(private val model: GenerativeModel, val history: MutableList<Content>
     prompt.assertComesFromUser()
     attemptLock()
 
-    val flow = model.generateContentStream(*history.toTypedArray(), prompt)
+    val flow = model.generateContentStream(prompt, *history.toTypedArray())
     val bitmaps = LinkedList<Bitmap>()
     val blobs = LinkedList<BlobPart>()
     val text = StringBuilder()

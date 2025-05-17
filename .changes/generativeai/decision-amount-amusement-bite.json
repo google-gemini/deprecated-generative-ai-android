@@ -1,0 +1,1 @@
+{"type":"PATCH","changes":["Require at least one argument for functions that take vararg"]}

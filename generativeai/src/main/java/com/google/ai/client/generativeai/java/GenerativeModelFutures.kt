@@ -38,21 +38,30 @@ abstract class GenerativeModelFutures internal constructor() {
    *
    * @param prompt A group of [Content]s to send to the model.
    */
-  abstract fun generateContent(vararg prompt: Content): ListenableFuture<GenerateContentResponse>
+  abstract fun generateContent(
+    prompt: Content,
+    vararg prompts: Content
+  ): ListenableFuture<GenerateContentResponse>
 
   /**
    * Generates a streaming response from the backend with the provided [Content]s.
    *
    * @param prompt A group of [Content]s to send to the model.
    */
-  abstract fun generateContentStream(vararg prompt: Content): Publisher<GenerateContentResponse>
+  abstract fun generateContentStream(
+    prompt: Content,
+    vararg prompts: Content
+  ): Publisher<GenerateContentResponse>
 
   /**
    * Counts the number of tokens used in a prompt.
    *
    * @param prompt A group of [Content]s to count tokens of.
    */
-  abstract fun countTokens(vararg prompt: Content): ListenableFuture<CountTokensResponse>
+  abstract fun countTokens(
+    prompt: Content,
+    vararg prompts: Content
+  ): ListenableFuture<CountTokensResponse>
 
   /** Creates a chat instance which internally tracks the ongoing conversation with the model */
   abstract fun startChat(): ChatFutures
@@ -69,15 +78,22 @@ abstract class GenerativeModelFutures internal constructor() {
 
   private class FuturesImpl(private val model: GenerativeModel) : GenerativeModelFutures() {
     override fun generateContent(
-      vararg prompt: Content
+      prompt: Content,
+      vararg prompts: Content
     ): ListenableFuture<GenerateContentResponse> =
-      SuspendToFutureAdapter.launchFuture { model.generateContent(*prompt) }
+      SuspendToFutureAdapter.launchFuture { model.generateContent(prompt, *prompts) }
 
-    override fun generateContentStream(vararg prompt: Content): Publisher<GenerateContentResponse> =
-      model.generateContentStream(*prompt).asPublisher()
+    override fun generateContentStream(
+      prompt: Content,
+      vararg prompts: Content
+    ): Publisher<GenerateContentResponse> =
+      model.generateContentStream(prompt, *prompts).asPublisher()
 
-    override fun countTokens(vararg prompt: Content): ListenableFuture<CountTokensResponse> =
-      SuspendToFutureAdapter.launchFuture { model.countTokens(*prompt) }
+    override fun countTokens(
+      prompt: Content,
+      vararg prompts: Content
+    ): ListenableFuture<CountTokensResponse> =
+      SuspendToFutureAdapter.launchFuture { model.countTokens(prompt, *prompts) }
 
     override fun startChat(): ChatFutures = startChat(emptyList())
 

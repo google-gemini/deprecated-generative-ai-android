@@ -101,9 +101,9 @@ internal constructor(
    * @return A [GenerateContentResponse] after some delay. Function should be called within a
    *   suspend context to properly manage concurrency.
    */
-  suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
+  suspend fun generateContent(prompt: Content, vararg prompts: Content): GenerateContentResponse =
     try {
-      controller.generateContent(constructRequest(*prompt)).toPublic().validate()
+      controller.generateContent(constructRequest(prompt, *prompts)).toPublic().validate()
     } catch (e: Throwable) {
       throw GoogleGenerativeAIException.from(e)
     }
@@ -114,9 +114,12 @@ internal constructor(
    * @param prompt A group of [Content]s to send to the model.
    * @return A [Flow] which will emit responses as they are returned from the model.
    */
-  fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
+  fun generateContentStream(
+    prompt: Content,
+    vararg prompts: Content
+  ): Flow<GenerateContentResponse> =
     controller
-      .generateContentStream(constructRequest(*prompt))
+      .generateContentStream(constructRequest(prompt, *prompts))
       .catch { throw GoogleGenerativeAIException.from(it) }
       .map { it.toPublic().validate() }
 
@@ -167,8 +170,8 @@ internal constructor(
    * @param prompt A group of [Content]s to count tokens of.
    * @return A [CountTokensResponse] containing the number of tokens in the prompt.
    */
-  suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
-    return controller.countTokens(constructCountTokensRequest(*prompt)).toPublic()
+  suspend fun countTokens(prompt: Content, vararg prompts: Content): CountTokensResponse {
+    return controller.countTokens(constructCountTokensRequest(prompt, *prompts)).toPublic()
   }
 
   /**
