@@ -21,10 +21,14 @@ import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.asTextOrNull
 import com.google.ai.client.generativeai.type.content
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 class ChatViewModel(
     generativeModel: GenerativeModel
@@ -36,52 +40,62 @@ class ChatViewModel(
         )
     )
 
-    private val _uiState: MutableStateFlow<ChatUiState> =
-        MutableStateFlow(ChatUiState(chat.history.map { content ->
-            // Map the initial messages
-            ChatMessage(
-                text = content.parts.first().asTextOrNull() ?: "",
-                participant = if (content.role == "user") Participant.USER else Participant.MODEL,
-                isPending = false
-            )
-        }))
-    val uiState: StateFlow<ChatUiState> =
-        _uiState.asStateFlow()
+    private val _uiState: MutableStateFlow<ChatUiState> = MutableStateFlow(
+        ChatUiState(
+            isLoading = false,
+            messages = initMessage(),
+        )
+    )
+    val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
+
+    private fun initMessage(): List<ChatMessage> = chat.history.map { content ->
+        // Map the initial messages
+        ChatMessage(
+            text = content.parts.first().asTextOrNull() ?: "",
+            participant = if (content.role == "user") Participant.USER else Participant.MODEL,
+        )
+    }
 
 
     fun sendMessage(userMessage: String) {
-        // Add a pending message
-        _uiState.value.addMessage(
-            ChatMessage(
-                text = userMessage,
-                participant = Participant.USER,
-                isPending = true
+        // Loading state, update user message
+        _uiState.update { currentState ->
+            currentState.copy(
+                isLoading = true,
+                messages = currentState.messages + ChatMessage(
+                    text = userMessage,
+                    participant = Participant.USER,
+                )
             )
-        )
+        }
 
         viewModelScope.launch {
             try {
-                val response = chat.sendMessage(userMessage)
-
-                _uiState.value.replaceLastPendingMessage()
-
-                response.text?.let { modelResponse ->
-                    _uiState.value.addMessage(
-                        ChatMessage(
+                val response = withContext(Dispatchers.IO) {
+                    chat.sendMessage(userMessage)
+                }
+                val modelResponse = response.text ?: return@launch
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        messages = it.messages + ChatMessage(
                             text = modelResponse,
                             participant = Participant.MODEL,
-                            isPending = false
                         )
                     )
                 }
-            } catch (e: Exception) {
-                _uiState.value.replaceLastPendingMessage()
-                _uiState.value.addMessage(
-                    ChatMessage(
-                        text = e.localizedMessage,
-                        participant = Participant.ERROR
+            } catch (cancel: CancellationException) {
+                throw cancel
+            } catch (throwable: Throwable) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        messages = it.messages + ChatMessage(
+                            text = throwable.localizedMessage ?: "Error",
+                            participant = Participant.ERROR,
+                        )
                     )
-                )
+                }
             }
         }
     }
